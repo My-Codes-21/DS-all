@@ -1,0 +1,104 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100  // Maximum size of the stack
+
+/* Global variables */
+int top;            // Index to hold the position of the topmost item
+int s[MAX_SIZE];    // Holds the stack items, with a maximum size defined
+int item;           // Item to be inserted into the stack
+int stack_size;     // Variable to store the user-defined stack size
+
+/* Function to push an item onto the stack */
+void push() {
+    // Check for overflow of the stack
+    if (top == stack_size - 1) {
+        printf("Stack overflow\n");
+        return;
+    }
+    top = top + 1;      // Increment top by 1
+    s[top] = item;      // Insert item into stack
+}
+
+/* Function to pop an item from the stack */
+int pop() {
+    int item_deleted;
+
+    // Check if the stack is underflowing (empty)
+    if (top == -1) {
+        printf("Stack underflow\n");
+        return 0;
+    }
+    item_deleted = s[top--]; // Access the top item and decrement top
+    return item_deleted;     // Return the deleted item
+}
+
+/* Function to display the contents of the stack */
+void display() {
+    int i;
+
+    // Check if the stack is empty
+    if (top == -1) {
+        printf("Stack is empty\n");
+        return;
+    }
+
+    // Display the contents of the stack
+    printf("Contents of the stack:\n");
+    for (i = 0; i <= top; i++) {
+        printf("%d\n", s[i]);
+    }
+}
+
+int main() {
+    int choice; // User choice for push, pop, and display
+
+    // Get the size of the stack from the user
+    printf("Enter the size of the stack (up to %d): ", MAX_SIZE);
+    scanf("%d", &stack_size);
+
+    // Validate the stack size input by the user
+    if (stack_size > MAX_SIZE || stack_size <= 0) {
+        printf("Invalid stack size. Please enter a size between 1 and %d.\n", MAX_SIZE);
+        exit(1);
+    }
+
+    top = -1;   // Indicates the stack is initially empty
+
+    // Infinite loop for menu-driven program
+    for (;;) {
+        printf("1: Push 2: Pop\n");
+        printf("3: Display 4: Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the item to be inserted: ");
+                scanf("%d", &item);
+                push();
+                break;
+
+            case 2:
+                item = pop();
+                if (item != 0) {
+                    printf("Item deleted = %d\n", item);
+                }
+                break;
+
+            case 3:
+                display();
+                break;
+
+            case 4:
+                exit(0); // Exit the program
+                break;
+
+            default:
+                printf("Invalid choice, try again.\n");
+                break;
+        }
+    }
+    
+    return 0; // Return 0 to indicate normal program termination
+}
