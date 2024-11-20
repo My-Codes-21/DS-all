@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int info;
+    struct node *link;
+};
+typedef struct node* NODE;
+
+NODE getnode() {
+    NODE x = (NODE) malloc(sizeof(struct node));
+    if (!x) { printf("Out of memory\n"); exit(0); }
+    return x;
+}
+
+NODE insert_front(int item, NODE first) {
+    NODE temp = getnode();
+    temp->info = item; temp->link = first;
+    return temp;
+}
+
+NODE insert_end(int item, NODE first) {
+    NODE temp = getnode(), cur;
+    temp->info = item; temp->link = NULL;
+    if (!first) return temp;
+    for (cur = first; cur->link; cur = cur->link);
+    cur->link = temp;
+    return first;
+}
+
+NODE delete_front(NODE first) {
+    if (!first) { printf("List is empty\n"); return NULL; }
+    NODE temp = first;
+    printf("Deleted: %d\n", first->info);
+    first = first->link; free(temp);
+    return first;
+}
+
+NODE delete_end(NODE first) {
+    if (!first) { printf("List is empty\n"); return NULL; }
+    if (!first->link) { printf("Deleted: %d\n", first->info); free(first); return NULL; }
+    NODE cur = first, prev = NULL;
+    while (cur->link) { prev = cur; cur = cur->link; }
+    printf("Deleted: %d\n", cur->info); free(cur); prev->link = NULL;
+    return first;
+}
+
+void display(NODE first) {
+    if (!first) { printf("List is empty\n"); return; }
+    printf("List: ");
+    for (NODE cur = first; cur; cur = cur->link) printf("%d ", cur->info);
+    printf("\n");
+}
+
+int main() {
+    NODE first = NULL;
+    int choice, item;
+    while (1) {
+        printf("\n1: Insert Front\n2: Insert End\n3: Delete Front\n4: Delete End\n5: Display\n6: Exit\nChoice: ");
+        scanf("%d", &choice);
+        switch (choice) {
+            case 1: printf("Enter item: "); scanf("%d", &item); first = insert_front(item, first); break;
+            case 2: printf("Enter item: "); scanf("%d", &item); first = insert_end(item, first); break;
+            case 3: first = delete_front(first); break;
+            case 4: first = delete_end(first); break;
+            case 5: display(first); break;
+            case 6: exit(0);
+            default: printf("Invalid choice!\n");
+        }
+    }
+}
