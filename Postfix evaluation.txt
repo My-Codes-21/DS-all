@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <math.h>
+#include <string.h>
+#include <ctype.h>
+
+/* Function to evaluate */
+double compute(char symbol, double op1, double op2) {
+    switch (symbol) {
+        case '+': return op1 + op2; /* Perform addition operation */
+        case '-': return op1 - op2; /* Perform subtraction operation */
+        case '*': return op1 * op2; /* Multiply two operands */
+        case '/': return op1 / op2; /* Perform division */
+        case '$': 
+        case '^': return pow(op1, op2); /* Compute power */
+        default: 
+            printf("Invalid operator encountered: %c\n", symbol);
+            return 0;
+    }
+}
+
+int main() {
+    double s[20];          /* Stack for operands */
+    double res;            /* Holds the result of partial or final computation */
+    double op1, op2;       /* Operands */
+    int top = -1;          /* Points to the topmost element */
+    int i;                 /* Index for scanning the postfix expression */
+    char postfix[20];      /* Valid input expression */
+    char symbol;           /* Current symbol in postfix expression */
+
+    printf("Enter the postfix expression: ");
+    scanf("%s", postfix);  /* Read the postfix expression */
+
+    for (i = 0; i < strlen(postfix); i++) {
+        symbol = postfix[i]; /* Get the current character */
+
+        if (isdigit(symbol)) { 
+            /* If operand, push onto the stack */
+            s[++top] = symbol - '0';  /* Convert char to number */
+        } else {
+            /* If operator, pop two operands and compute */
+            if (top < 1) {
+                printf("Error: Not enough operands in the stack.\n");
+                return -1;
+            }
+            op2 = s[top--]; /* Obtain second operand */
+            op1 = s[top--]; /* Obtain first operand */
+
+            /* Perform the specified operation */
+            res = compute(symbol, op1, op2);
+
+            /* Push the partial result onto the stack */
+            s[++top] = res;
+        }
+    }
+
+    if (top != 0) {
+        printf("Error: Invalid postfix expression.\n");
+        return -1;
+    }
+
+    res = s[top--]; /* Obtain the final result */
+    printf("The result is %f\n", res);
+
+    return 0;
+}
