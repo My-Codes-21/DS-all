@@ -1,0 +1,146 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+    int info;
+    struct node *llink;
+    struct node *rlink;
+};
+
+typedef struct node* NODE;
+
+// Function to allocate a new node
+NODE getnode() {
+    NODE x = (NODE) malloc(sizeof(struct node));
+    if (x == NULL) {
+        printf("Out of memory\n");
+        exit(0);
+    }
+    return x;
+}
+
+// Function to insert a node at the front of the circular doubly linked list
+NODE insert_front(int item, NODE last) {
+    NODE temp = getnode();
+    temp->info = item;
+
+    if (last == NULL) {
+        temp->rlink = temp;
+        temp->llink = temp;
+        return temp;
+    }
+    temp->rlink = last->rlink;
+    temp->llink = last;
+    last->rlink->llink = temp;
+    last->rlink = temp;
+    return last;
+}
+
+// Function to insert a node at the end of the circular doubly linked list
+NODE insert_end(int item, NODE last) {
+    NODE temp = getnode();
+    temp->info = item;
+
+    if (last == NULL) {
+        temp->rlink = temp;
+        temp->llink = temp;
+        return temp;
+    }
+    temp->rlink = last->rlink;
+    temp->llink = last;
+    last->rlink->llink = temp;
+    last->rlink = temp;
+    return temp;
+}
+
+// Function to delete the front node of the circular doubly linked list
+NODE delete_front(NODE last) {
+    if (last == NULL) {
+        printf("List is empty, cannot delete\n");
+        return NULL;
+    }
+    NODE temp = last->rlink;
+    if (last->rlink == last) {
+        printf("Item deleted = %d\n", temp->info);
+        free(temp);
+        return NULL;
+    }
+    last->rlink = temp->rlink;
+    temp->rlink->llink = last;
+    printf("Item deleted = %d\n", temp->info);
+    free(temp);
+    return last;
+}
+
+// Function to delete the last node of the circular doubly linked list
+NODE delete_end(NODE last) {
+    if (last == NULL) {
+        printf("List is empty, cannot delete\n");
+        return NULL;
+    }
+    NODE temp = last;
+    if (last->rlink == last) {
+        printf("Item deleted = %d\n", temp->info);
+        free(temp);
+        return NULL;
+    }
+    last->llink->rlink = last->rlink;
+    last->rlink->llink = last->llink;
+    printf("Item deleted = %d\n", last->info);
+    free(last);
+    return temp->llink;
+}
+
+// Function to display the contents of the circular doubly linked list
+void display(NODE last) {
+    if (last == NULL) {
+        printf("List is empty\n");
+        return;
+    }
+    NODE cur = last->rlink;
+    printf("The contents of the circular doubly linked list are: ");
+    do {
+        printf("%d ", cur->info);
+        cur = cur->rlink;
+    } while (cur != last->rlink);
+    printf("\n");
+}
+
+// Main function
+int main() {
+    NODE last = NULL;
+    int choice, item;
+
+    while (1) {
+        printf("\n1: Insert Front\n2: Insert End\n3: Delete Front\n4: Delete End\n5: Display\n6: Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the item to be inserted at the front: ");
+                scanf("%d", &item);
+                last = insert_front(item, last);
+                break;
+            case 2:
+                printf("Enter the item to be inserted at the end: ");
+                scanf("%d", &item);
+                last = insert_end(item, last);
+                break;
+            case 3:
+                last = delete_front(last);
+                break;
+            case 4:
+                last = delete_end(last);
+                break;
+            case 5:
+                display(last);
+                break;
+            case 6:
+                exit(0);
+            default:
+                printf("Invalid choice!\n");
+        }
+    }
+    return 0;
+}
